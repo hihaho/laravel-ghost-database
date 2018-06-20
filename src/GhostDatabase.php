@@ -117,6 +117,12 @@ class GhostDatabase
             ->dropAllTables();
     }
 
+    /**
+     * Deletes all snapshots from the default disk or `$diskName`
+     *
+     * @param string|null $diskName The disk name
+     * @throws NoSnapshotsFoundException
+     */
     public function cleanupSnapshots(string $diskName = null)
     {
         $this->setSnapshotRepository($diskName);
