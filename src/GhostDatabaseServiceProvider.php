@@ -2,6 +2,7 @@
 
 namespace HiHaHo\GhostDatabase;
 
+use HiHaHo\GhostDatabase\Console\Commands\CleanupSnapshots;
 use HiHaHo\GhostDatabase\Console\Commands\Export;
 use HiHaHo\GhostDatabase\Console\Commands\Flush;
 use HiHaHo\GhostDatabase\Console\Commands\Import;
@@ -26,6 +27,7 @@ class GhostDatabaseServiceProvider extends ServiceProvider
                 Import::class,
                 Export::class,
                 Flush::class,
+                CleanupSnapshots::class
             ]);
         }
     }

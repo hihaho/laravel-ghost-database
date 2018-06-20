@@ -116,4 +116,18 @@ class GhostDatabase
             ->getSchemaBuilder()
             ->dropAllTables();
     }
+
+    public function cleanupSnapshots(string $diskName = null)
+    {
+        $this->setSnapshotRepository($diskName);
+
+        $snapshots = $this->snapshotRepository->getAll();
+        if ($snapshots->isEmpty()) {
+            throw new NoSnapshotsFoundException();
+        }
+
+        $snapshots->each(function(Snapshot $snapshot) {
+            $snapshot->delete();
+        });
+    }
 }
