@@ -2,7 +2,7 @@
     "name": "hihaho/laravel-ghost-database",
     "license": "MIT",
     "description": "Easily import your existing database in a ghost database, which could be useful for UnitTesting or backups etc.",
-    "version": "v0.1.0",
+    "version": "v0.1.1",
     "authors": [
         {
             "name": "Robert Boes",
