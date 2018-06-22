@@ -10,7 +10,9 @@ namespace HiHaHo\GhostDatabase\Console\Commands;
 
 use HiHaHo\GhostDatabase\Console\Traits\HasDbConnection;
 use HiHaHo\GhostDatabase\Exceptions\DatabaseNotConfiguredException;
+use HiHaHo\GhostDatabase\Exceptions\NoSnapshotsFoundException;
 use Illuminate\Console\Command;
+use Spatie\DbSnapshots\Snapshot;
 use Symfony\Component\Console\Input\InputOption;
 
 class Import extends Command
@@ -53,6 +55,7 @@ class Import extends Command
      *
      * @return mixed
      * @throws DatabaseNotConfiguredException
+     * @throws NoSnapshotsFoundException
      */
     public function handle()
     {
@@ -60,9 +63,26 @@ class Import extends Command
             $this->input->getOption('database') ?: config('ghost-database.default_connection')
         );
 
-        $snapshot = $this->ghostDatabase->import($this->connection);
+        $native = $this->input->getOption('native-import') ?: config('ghost-database.use_native_importer');
+
+        $snapshot = $this->import($native);
 
         $this->info("Snapshot `{$snapshot->name}` loaded!");
+    }
+
+    /**
+     * @param bool $native
+     * @return Snapshot
+     * @throws NoSnapshotsFoundException
+     */
+    protected function import($native = false): Snapshot
+    {
+        if ($native) {
+            $this->info("Starting native import");
+            return $this->ghostDatabase->importNative($this->connection);
+        }
+
+        return $this->ghostDatabase->import($this->connection);
     }
 
     /**
@@ -74,6 +94,7 @@ class Import extends Command
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use.'],
+            ['native-import', null, InputOption::VALUE_NONE, 'Use the native importer'],
         ];
     }
 }

@@ -17,4 +17,6 @@ return [
      * Exports will (by default) be imported to this database
      */
     'default_connection' => 'ghost-database',
+
+    'use_native_importer' => false,
 ];

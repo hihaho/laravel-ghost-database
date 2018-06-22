@@ -23,9 +23,12 @@ class GhostDatabase
      */
     protected $snapshotRepository;
 
-    public function __construct(\Illuminate\Contracts\Foundation\Application $application)
+    protected $nativeDbImportFactory;
+
+    public function __construct(\Illuminate\Contracts\Foundation\Application $application, NativeDbImportFactory $nativeDbImportFactory)
     {
         $this->laravel = $application;
+        $this->nativeDbImportFactory = $nativeDbImportFactory;
     }
 
     /**
@@ -103,6 +106,28 @@ class GhostDatabase
         $snapshot->load($connection);
 
         return $snapshot;
+    }
+
+    public function importNative(string $connection, Snapshot $snapshot = null, string $diskName = null): Snapshot
+    {
+        if (!isset($snapshot)) {
+            $this->setSnapshotRepository($diskName);
+
+            $snapshot = $this->getLatestSnapshot();
+        }
+
+        $this->getNativeDbImporter($connection)
+            ->setSnapshot($snapshot)
+            ->execute();
+
+        return $snapshot;
+    }
+
+    protected function getNativeDbImporter(string $connectionName): NativeDbImport
+    {
+        $factory = $this->nativeDbImportFactory;
+
+        return $factory::createForConnection($connectionName);
     }
 
     /**
