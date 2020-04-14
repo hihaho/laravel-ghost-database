@@ -81,8 +81,9 @@ abstract class NativeDbImport
         $command = $this->getImportCommand();
 
         $process = new Process($command);
-
-        $process->run();
+        
+        $process->setTimeout(null)
+            ->run();
 
         $this->checkIfImportWasSuccessFul($process);
     }
